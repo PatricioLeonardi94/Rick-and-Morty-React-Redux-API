@@ -1,5 +1,5 @@
-##Curso de React-Redux, Rick and Morty API
-##Curso brindado por:
+## Curso de React-Redux, Rick and Morty API
+## Curso brindado por:
 
 ### https://github.com/HectorBlisS
 ### https://github.com/HectorBlisS/Curso-React-Redux-GraphQL
