@@ -1,8 +1,8 @@
 ##Curso de React-Redux, Rick and Morty API
 ##Curso brindado por:
 
-# https://github.com/HectorBlisS
-# https://github.com/HectorBlisS/Curso-React-Redux-GraphQL
+### https://github.com/HectorBlisS
+### https://github.com/HectorBlisS/Curso-React-Redux-GraphQL
 
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
