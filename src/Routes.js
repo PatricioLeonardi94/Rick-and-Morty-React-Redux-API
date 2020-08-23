@@ -4,6 +4,7 @@ import Home from './components/home/HomePage'
 import FavPage from './components/favs/FavPage'
 import LoginPage from './components/login/LoginPage'
 import { compose } from 'redux'
+import GraphHome from './components/home/GraphHome'
 
 function PrivateRoute({path, component, ...rest}){
     let storage = localStorage.getItem('storage')
@@ -16,10 +17,24 @@ function PrivateRoute({path, component, ...rest}){
     }
 }
 
+//REACT_REDUX
+
+// export default function Routes() {
+//     return (
+//         <Switch>
+//             <Route exact path="/" component={Home} />
+//             <PrivateRoute path="/favs" component={FavPage} />
+//             <Route path="/login" component={LoginPage} />
+//         </Switch>
+//     )
+// }
+
+//With APOLLO
+
 export default function Routes() {
     return (
         <Switch>
-            <Route exact path="/" component={Home} />
+            <Route exact path="/" component={GraphHome} />
             <PrivateRoute path="/favs" component={FavPage} />
             <Route path="/login" component={LoginPage} />
         </Switch>
