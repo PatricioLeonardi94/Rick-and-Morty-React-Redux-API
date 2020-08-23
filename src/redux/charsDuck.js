@@ -1,14 +1,24 @@
 import axios from 'axios'
 import {updateDB, getFavs} from '../firebase'
+import ApolloClient, {gql} from 'apollo-boost'
+import { database } from 'firebase'
 
 //constant 
 let initialData = {
     fetching:false,
     array:[],
     current:{},
-    favourites: []
+    favourites: [],
+    nextPage:1
 }
 let URL = "https://rickandmortyapi.com/api/character"
+
+let client = new ApolloClient({
+    uri: "https://rickandmortyapi.com/graphql"
+})
+
+let UPDATE_PAGE = "UPDATE_PAGE"
+
 let GET_CHARACTERS = "GET_CHARACTERS"
 let GET_CHARACTERS_SUCCESS = "GET_CHARACTERS_SUCCES"
 let GET_CHARACTERS_ERROR = "GET_CHARACTERS_ERROR"
@@ -53,6 +63,9 @@ export default function reducer(state = initialData, action){
 
         case GET_FAVOURITES_ERROR:
             return {...state, error: action.payload, fetching : false}
+
+        case UPDATE_PAGE:
+            return {...state, nextPage: action.payload}
 
         default:
             return state
@@ -105,6 +118,10 @@ export let addToFavouriteAction = () => (dispatch, getState) => {
     let {array, favourites} = getState().characters
     let {uid} = getState().user
     let character = array.shift()
+    if(!array.length){
+        getCharacterAction()(dispatch, getState)
+        return
+    }
     favourites.push(character)
 
     updateDB(favourites, uid)
@@ -129,29 +146,79 @@ export let removeCharacterAction = () => (dispatch, getState) =>{
     })
 }
 
+//With Apollo and GQL
 export let getCharacterAction = () => (dispatch, getState) => {
-    //primero para devolver un estado verdadero del fetching para despues generar una accion de carga visible de manera mas facil
+    let query = gql`
+       query ($page:Int){
+           characters(page:$page){
+               info{
+                   pages
+                   next
+                   prev
+               }
+               results{
+                   name
+                   image
+               }
+           }
+       }
+    `
     dispatch({
         type: GET_CHARACTERS,
     })
-    //usamos axios para devolver los elementos de la API de Rick and Morty con el URL de la pagina
-    //Despues especificamos el caso error, para cuando no es posible devolver esta informacion
-    //Devolvemos el caso success cuando se puedo traer la informacion que se carga en el payload.
-    return axios.get(URL)
-    .then(res => {
+
+    let{nextPage} = getState().characters
+    return client.query({
+        query,
+        variables: {page:nextPage}
+    })
+    .then(( {data, error} ) => {
+        if(error){
             dispatch({
-                type: GET_CHARACTERS_SUCCESS,
-                payload: res.data.results
+                type: GET_CHARACTERS_ERROR,
+                payload: error
             })
+            return
+        }
+        dispatch({
+            type: GET_CHARACTERS_SUCCESS,
+            payload: data.characters.results
         })
-        .catch(err=>{
-            console.log(err)
-            dispatch({
-                type : GET_CHARACTERS_ERROR,
-                payload : err.response.message 
-            })
+        dispatch({
+            type: UPDATE_PAGE,
+            payload: data.characters.info.next ?  data.characters.info.next : 1
         })
+    })
+    
 }
+
+
+
+//Con AXIOS
+
+// export let getCharacterAction = () => (dispatch, getState) => {
+//     //primero para devolver un estado verdadero del fetching para despues generar una accion de carga visible de manera mas facil
+//     dispatch({
+//         type: GET_CHARACTERS,
+//     })
+//     //usamos axios para devolver los elementos de la API de Rick and Morty con el URL de la pagina
+//     //Despues especificamos el caso error, para cuando no es posible devolver esta informacion
+//     //Devolvemos el caso success cuando se puedo traer la informacion que se carga en el payload.
+//     return axios.get(URL)
+//     .then(res => {
+//             dispatch({
+//                 type: GET_CHARACTERS_SUCCESS,
+//                 payload: res.data.results
+//             })
+//         })
+//         .catch(err=>{
+//             console.log(err)
+//             dispatch({
+//                 type : GET_CHARACTERS_ERROR,
+//                 payload : err.response.message 
+//             })
+//         })
+// }
 
 
 

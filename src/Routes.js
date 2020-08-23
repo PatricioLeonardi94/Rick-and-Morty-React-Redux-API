@@ -25,3 +25,15 @@ export default function Routes() {
         </Switch>
     )
 }
+
+//With APOLLO
+
+// export default function Routes() {
+//     return (
+//         <Switch>
+//             <Route exact path="/" component={GraphHome} />
+//             <PrivateRoute path="/favs" component={FavPage} />
+//             <Route path="/login" component={LoginPage} />
+//         </Switch>
+//     )
+// }

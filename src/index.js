@@ -14,9 +14,9 @@ let store = generateStore()
 
 let WithRouter = () => <BrowserRouter><App /></BrowserRouter>
 let WithStore = () => <Provider store={store} > <WithRouter /></Provider>
-let WithApollo = () =>
+let WithApollo = () => <ApolloProvider client={client} > <WithStore /></ApolloProvider>
 
-ReactDOM.render(<WithStore />, document.getElementById('root'));
+ReactDOM.render(<WithApollo />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
