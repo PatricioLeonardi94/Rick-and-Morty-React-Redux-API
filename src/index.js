@@ -7,7 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import 'font-awesome/css/font-awesome.css'
 import {Provider} from 'react-redux'
 import generateStore from './redux/store'
-import {ApolloClient} from 'apollo-boost'
+import ApolloClient from 'apollo-boost'
 import {ApolloClient} from 'react-apollo'
 
 let store = generateStore()
